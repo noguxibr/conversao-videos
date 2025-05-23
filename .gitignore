@@ -1,0 +1,29 @@
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais (caso use)
+.env/
+.venv/
+env/
+venv/
+
+# Arquivos de log
+*.log
+
+# Vídeos grandes
+*.mp4
+*.avi
+*.dav
+
+# Saída de testes
+tests/videos_teste/
+output/
+build/
+dist/
+
+# Arquivos temporários ou de sistema
+*.swp
+.DS_Store
+Thumbs.db
