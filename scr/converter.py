@@ -7,54 +7,67 @@ import os
 root = tk.Tk()
 root.withdraw()
 
-print('🔍 Selecione o arquivo de entrada (.dav ou .avi)...')
-entrada = filedialog.askopenfilename(
-    title='Selecione o arquivo de entrada',
+print('🔍 Selecione um ou mais arquivos de entrada (.dav ou .avi)...')
+entradas = filedialog.askopenfilenames(
+    title='Selecione os arquivos de entrada',
     filetypes=[('Arquivos de vídeo', '*.dav *.avi'), ('Todos os arquivos', '*.*')]
 )
 
-if not entrada:
+if not entradas:
     print('❌ Nenhum arquivo de entrada selecionado.')
     exit()
 
-print('📁 Selecione a pasta onde deseja salvar o vídeo convertido...')
+print('📁 Selecione a pasta onde deseja salvar os vídeos convertidos...')
 saida_diretorio = filedialog.askdirectory(title='Selecione a pasta de saída')
 
 if not saida_diretorio:
     print('❌ Nenhuma pasta de saída selecionada.')
     exit()
 
-saida_nome = input('✍️ Digite o nome do arquivo de saída (ex: video_convertido.mp4): ').strip()
-if not saida_nome.lower().endswith('.mp4'):
-    saida_nome += '.mp4'
+for entrada in entradas:
+    nome_original = os.path.splitext(os.path.basename(entrada))[0]
+    print(f'\n📄 Arquivo selecionado: {nome_original}')
 
-saida = os.path.join(saida_diretorio, saida_nome)
+    saida_nome = input('✍️ Digite o nome do arquivo convertido (sem .mp4) ou pressione Enter para usar o nome original: ').strip()
 
-entrada_aspas = f'"{entrada}"'
-saida_aspas = f'"{saida}"'
+    # Se o usuário não digitar nada, usa o nome original
+    if not saida_nome:
+        saida_nome = nome_original
 
-# Flag extra para corrigir problemas de tempo e leitura
-comando = f'C:\\ffmpeg\\bin\\ffmpeg.exe -fflags +genpts -avoid_negative_ts make_zero -i {entrada_aspas} -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -movflags +faststart {saida_aspas}'
+    # Garante que o nome termina com .mp4
+    if not saida_nome.lower().endswith('.mp4'):
+        saida_nome += '.mp4'
 
-print(f'🚀 Executando comando:\n{comando}')
+    saida = os.path.join(saida_diretorio, saida_nome)
 
-try:
-    resultado = subprocess.run(
-        comando,
-        shell=True,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True
+    entrada_aspas = f'"{entrada}"'
+    saida_aspas = f'"{saida}"'
+
+    comando = (
+        f'C:\\ffmpeg\\bin\\ffmpeg.exe -fflags +genpts -avoid_negative_ts make_zero '
+        f'-i {entrada_aspas} -c:v libx264 -preset fast -crf 23 '
+        f'-c:a aac -b:a 128k -movflags +faststart {saida_aspas}'
     )
 
-    # Verifica se o arquivo foi criado com sucesso e tem conteúdo
-    if os.path.exists(saida) and os.path.getsize(saida) > 10_000:  # mínimo 10 KB
-        print(f'✅ Conversão concluída com sucesso!\n📁 Arquivo salvo em: {saida}')
-    else:
-        print('⚠️ Conversão finalizada, mas o arquivo parece vazio ou inválido.')
-        print('📄 Saída do FFmpeg:\n', resultado.stderr)
+    print(f'🚀 Convertendo: {entrada}\n👉 Novo nome: {saida_nome}')
+    try:
+        resultado = subprocess.run(
+            comando,
+            shell=True,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True
+        )
 
-except subprocess.CalledProcessError as e:
-    print('❌ Ocorreu um erro durante a conversão.')
-    print('📄 Erro do FFmpeg:\n', e.stderr)
+        if os.path.exists(saida) and os.path.getsize(saida) > 10_000:
+            print(f'✅ Sucesso: {saida_nome}')
+        else:
+            print(f'⚠️ Arquivo convertido parece vazio ou inválido: {saida_nome}')
+            print('📄 Saída do FFmpeg:\n', resultado.stderr)
+
+    except subprocess.CalledProcessError as e:
+        print(f'❌ Erro ao converter: {entrada}')
+        print('📄 Erro do FFmpeg:\n', e.stderr)
+
+print('\n🏁 Conversão de todos os arquivos finalizada.')
