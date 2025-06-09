@@ -61,3 +61,46 @@ Após atualizar o `README.md`, rode:
 git add README.md
 git commit -m "docs: atualiza README com nova estrutura web"
 git push origin main
+```
+
+### 🚀 Como rodar o projeto
+
+1. **Clone o repositório (se ainda não tiver):**
+
+```bash
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+```
+
+2. **Crie um ambiente virtual (opcional, mas recomendado):**
+
+```bash
+python -m venv venv
+venv\Scripts\activate  # No Windows
+# ou
+source venv/bin/activate  # No Linux/Mac
+```
+
+3. **Instale as dependências:**
+
+```bash
+pip install flask
+```
+
+> 💡 Se você tiver um `requirements.txt`, substitua o comando acima por:
+>
+> ```bash
+> pip install -r requirements.txt
+> ```
+
+4. **Execute a aplicação:**
+
+```bash
+python app.py
+```
+
+5. **Abra o navegador e acesse:**
+
+```
+http://localhost:5000
+```
