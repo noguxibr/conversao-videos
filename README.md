@@ -68,8 +68,8 @@ git push origin main
 1. **Clone o repositório (se ainda não tiver):**
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/noguxibr/conversao-videos.git
+cd conversao-videos
 ```
 
 2. **Crie um ambiente virtual (opcional, mas recomendado):**
